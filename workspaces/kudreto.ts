@@ -87,6 +87,82 @@ const seed: WorkspaceCard[] = [
     tone: "Yüksek bağlamlı, operasyonu anlayan, sakin",
     message: "Hızlı teslimat ürünlerinde asıl karmaşıklık çoğu zaman müşterinin görmediği operasyon katmanlarında birikiyor. Bu panellerde karar netliği ve istisna yönetimi üzerine daha sade bir sistem dili kurmak ciddi fark yaratabilir.",
   }),
+  kudretoCard({
+    id: "sektorsoft",
+    title: "SektorSoft",
+    meta: "Ankara, Türkiye · B2B platform · SaaS",
+    category: "SaaS",
+    type: "Stratejik Ürün Fırsatı",
+    score: 82,
+    level: "Odaklı",
+    companyType: "B2B platform",
+    productCategory: "Arayüz Modernizasyonu",
+    insights: [
+      ["Muhtemel Operasyonel Problem", "B2B SaaS ürünlerinde onboarding, yetki yapıları, raporlama ve müşteri destek akışları büyüdükçe ürün karmaşıklığı görünür hale gelir."],
+      ["Olası UX / Arayüz Problemi", "Arayüz eski kaldığında güçlü ürün değeri yeterince algılanmaz; bilgi mimarisi ve design system ihtiyacı oluşur."],
+      ["Önerilen Yaklaşım Açısı", "Kudreto burada hızlı redesign değil, ürün mimarisi ve B2B kullanım kalitesini birlikte iyileştiren stratejik partner olarak konumlanmalı."],
+    ],
+    caseStudy: "Operasyonel UX örnekleri",
+    tone: "Sakin, B2B ürün gerçekliğini anlayan, pratik",
+    message: "B2B SaaS ürünlerinde arayüz yenileme çoğu zaman yalnızca görsel bir ihtiyaç değil; onboarding, yetki, raporlama ve destek yükünü azaltan bir ürün netliği meselesi oluyor. Bu katmanı birlikte daha okunabilir hale getirmek değer yaratabilir.",
+  }),
+  kudretoCard({
+    id: "metis-bilisim",
+    title: "Metis Bilişim",
+    meta: "Ankara, Türkiye · B2B platform · White-label Portal",
+    category: "White-label Sistemler",
+    type: "Design System Fırsatı",
+    score: 85,
+    level: "Yüksek Uyum",
+    companyType: "B2B platform",
+    productCategory: "White-label Portal",
+    insights: [
+      ["Muhtemel Operasyonel Problem", "Farklı müşteri ve kurum ihtiyaçları white-label ürünlerde konfigürasyon, izin ve rol yönetimini zorlaştırabilir."],
+      ["Olası UX / Arayüz Problemi", "Tekrarlayan müşteri varyasyonları tasarım sistemi olmadan yönetildiğinde UI tutarlılığı ve geliştirme hızı düşer."],
+      ["Önerilen Yaklaşım Açısı", "Linktera benzeri white-label mimari deneyimi üzerinden sistemleşen arayüz ve ürün yönetimi anlatılmalı."],
+    ],
+    caseStudy: "Linktera",
+    tone: "Yapısal, teknik bağlamı bilen, güven veren",
+    message: "White-label ürünlerde büyüme çoğu zaman müşteri sayısıyla değil, varyasyon sayısıyla karmaşıklaşır. Bu noktada tasarım sistemi ve ürün mimarisi birlikte ele alındığında hem geliştirme hızı hem de müşteri deneyimi daha tutarlı hale gelir.",
+  }),
+  kudretoCard({
+    id: "izmir-ai-labs",
+    title: "İzmir AI Labs",
+    meta: "İzmir, Türkiye · Scale-up · AI-native Workflow",
+    category: "AI Ürünleri",
+    type: "AI Workflow Fırsatı",
+    score: 80,
+    level: "Erken Sinyal",
+    companyType: "Scale-up",
+    productCategory: "AI-native Workflow",
+    insights: [
+      ["Muhtemel Operasyonel Problem", "AI workflow ürünlerinde karar önerisi, insan onayı, istisna yönetimi ve güven katmanları netleşmeden ürün ölçeklenemez."],
+      ["Olası UX / Arayüz Problemi", "Prompt veya otomasyon arayüzü güçlü olsa bile review, correction ve audit akışları zayıf kalabilir."],
+      ["Önerilen Yaklaşım Açısı", "Kudreto AI ürünlerini yalnızca arayüz değil, güvenilir karar sistemi olarak konumlandıran UX partneri olabilir."],
+    ],
+    caseStudy: "Operasyonel UX örnekleri",
+    tone: "Araştırmacı, sakin, AI jargonuna kaçmayan",
+    message: "AI ürünlerinde asıl tasarım sorusu genelde modelin ne ürettiği değil; insanın o çıktıyı nasıl gözden geçirdiği, düzelttiği ve operasyona dahil ettiği oluyor. Bu katmanda daha güvenilir bir workflow dili kurmak değerli olabilir.",
+  }),
+  kudretoCard({
+    id: "london-opsgrid",
+    title: "OpsGrid",
+    meta: "Londra, Birleşik Krallık · B2B platform · AI-native Workflow",
+    category: "Operasyonel Platformlar",
+    type: "Operasyonel UX Fırsatı",
+    score: 83,
+    level: "Odaklı",
+    companyType: "B2B platform",
+    productCategory: "AI-native Workflow",
+    insights: [
+      ["Muhtemel Operasyonel Problem", "Operasyon ekipleri farklı sistemlerden gelen istisna, görev ve karar sinyallerini tek bir yüzeyde yorumlamak zorunda kalabilir."],
+      ["Olası UX / Arayüz Problemi", "Dashboard yoğunluğu karar netliğini azaltır; öncelik, istisna ve aksiyon hiyerarşisi yeniden düşünülmelidir."],
+      ["Önerilen Yaklaşım Açısı", "Kudreto, yoğun operasyon panellerini daha karar odaklı ve sakin ürün yüzeylerine dönüştüren partner olarak konumlanmalı."],
+    ],
+    caseStudy: "Operasyonel UX örnekleri",
+    tone: "Analitik, operasyon diliyle konuşan, düşük basınçlı",
+    message: "Operasyonel platformlarda değer çoğu zaman daha fazla veri göstermekten değil, hangi sinyalin aksiyona dönüşmesi gerektiğini netleştirmekten geliyor. Bu karar yüzeyini birlikte sadeleştirmek ilginç olabilir.",
+  }),
 ];
 
 export const kudretoWorkspace: WorkspaceConfig = {
@@ -113,6 +189,7 @@ export const kudretoWorkspace: WorkspaceConfig = {
   resultDescription: "Stratejik uyum, operasyonel problem ve case eşleşmesine göre sıralanır.",
   runAnalysis(filters) {
     return seed
+      .filter((card) => matchesKudretoFilters(card, filters))
       .map((card) => scoreKudretoCard(card, filters))
       .sort((a, b) => b.opportunityScore - a.opportunityScore)
       .slice(0, 5);
@@ -177,6 +254,19 @@ function scoreKudretoCard(card: WorkspaceCard, filters: WorkspaceFilters): Works
   const levelMatch = filters.opportunityLevel === "Tümü" ? 0 : card.opportunityLevel === filters.opportunityLevel ? 3 : 0;
 
   return { ...card, opportunityScore: clampScore(card.opportunityScore + sectorMatch + categoryMatch + typeMatch + levelMatch) };
+}
+
+function matchesKudretoFilters(card: WorkspaceCard, filters: WorkspaceFilters) {
+  const rules = [
+    filters.country === "Tümü" || card.meta.includes(filters.country),
+    filters.city === "Tümü" || card.meta.includes(filters.city),
+    filters.sector === "Tümü" || card.category === filters.sector,
+    filters.companyType === "Tümü" || card.meta.includes(filters.companyType),
+    filters.productCategory === "Tümü" || card.meta.includes(filters.productCategory),
+    filters.opportunityLevel === "Tümü" || card.opportunityLevel === filters.opportunityLevel,
+  ];
+
+  return rules.every(Boolean);
 }
 
 function signalItem(company: string, title: string, description: string, labels: string[]) {

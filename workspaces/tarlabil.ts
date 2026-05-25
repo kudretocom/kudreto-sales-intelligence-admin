@@ -113,6 +113,7 @@ export const tarlabilWorkspace: WorkspaceConfig = {
   resultDescription: "Bölge, mahsul, tedarik riski ve alıcı firma uyumuna göre sıralanır.",
   runAnalysis(filters) {
     return seed
+      .filter((card) => matchesTarlabilFilters(card, filters))
       .map((card) => scoreTarlabilCard(card, filters))
       .sort((a, b) => b.opportunityScore - a.opportunityScore)
       .slice(0, 5);
@@ -179,6 +180,19 @@ function scoreTarlabilCard(card: WorkspaceCard, filters: WorkspaceFilters): Work
   const levelMatch = filters.opportunityLevel === "Tümü" ? 0 : card.opportunityLevel === filters.opportunityLevel ? 3 : 0;
 
   return { ...card, opportunityScore: clampScore(card.opportunityScore + provinceMatch + districtMatch + cropMatch + typeMatch + riskMatch + levelMatch) };
+}
+
+function matchesTarlabilFilters(card: WorkspaceCard, filters: WorkspaceFilters) {
+  const rules = [
+    filters.province === "Tümü" || card.meta.includes(filters.province),
+    filters.district === "Tümü" || card.meta.includes(filters.district),
+    filters.crop === "Tümü" || card.category === filters.crop,
+    filters.companyType === "Tümü" || card.meta.includes(filters.companyType),
+    filters.supplyRisk === "Tümü" || card.meta.includes(`${filters.supplyRisk} risk`),
+    filters.opportunityLevel === "Tümü" || card.opportunityLevel === filters.opportunityLevel,
+  ];
+
+  return rules.every(Boolean);
 }
 
 function signalItem(company: string, crop: string, title: string, description: string) {

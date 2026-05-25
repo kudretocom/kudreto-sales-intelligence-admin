@@ -152,14 +152,30 @@ export default function Home() {
             </div>
 
             <div className="mt-4 grid gap-4">
-              {cards.map((card) => (
-                <IntelligenceResult key={card.id} card={card} />
-              ))}
+              {cards.length ? (
+                cards.map((card) => <IntelligenceResult key={card.id} card={card} />)
+              ) : (
+                <EmptyResults workspace={workspace} />
+              )}
             </div>
           </div>
         </section>
       </div>
     </main>
+  );
+}
+
+function EmptyResults({ workspace }: { workspace: WorkspaceConfig }) {
+  return (
+    <section className="rounded-lg border border-[#e8eaee] bg-white p-8 text-center shadow-[0_20px_50px_rgba(15,23,42,0.025)]">
+      <div className="mx-auto mb-4 grid size-10 place-items-center rounded-md border border-[#dfe4ea] bg-[#fbfcfd] text-[#2563eb]">
+        <Signal className="size-4" />
+      </div>
+      <h3 className="text-[15px] font-semibold text-[#15171a]">Bu filtrelerle eşleşen kayıt yok</h3>
+      <p className="mx-auto mt-2 max-w-[520px] text-[13px] leading-6 text-[#69707a]">
+        {workspace.shortName} veri havuzunda bu bağlama uyan örnek bulunmuyor. Şehir/il, firma tipi veya kategori filtresini genişletip tekrar analiz başlatabilirsiniz.
+      </p>
+    </section>
   );
 }
 
