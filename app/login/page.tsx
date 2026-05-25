@@ -4,7 +4,7 @@ import { ArrowRight, CircleDot, LockKeyhole } from "lucide-react";
 import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("kudret@kudreto.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
