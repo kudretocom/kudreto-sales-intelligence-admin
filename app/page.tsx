@@ -4,6 +4,7 @@ import {
   Activity,
   Building2,
   ChevronDown,
+  ChevronRight,
   CircleDot,
   ExternalLink,
   FileText,
@@ -275,6 +276,9 @@ function FilterPanel({
 }
 
 function IntelligenceResult({ card }: { card: IntelligenceCard }) {
+  const [isSignalsOpen, setIsSignalsOpen] = useState(false);
+  const [isPeopleOpen, setIsPeopleOpen] = useState(false);
+
   return (
     <article className="group rounded-lg border border-[#e8eaee] bg-white p-5 transition duration-200 hover:border-[#d5dce5] hover:shadow-[0_22px_60px_rgba(15,23,42,0.055)]">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -335,31 +339,41 @@ function IntelligenceResult({ card }: { card: IntelligenceCard }) {
       </div>
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-        <section className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4">
-          <SectionTitle icon={Signal} label="Arayış Sinyalleri" />
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <CollapsiblePanel
+          icon={Signal}
+          isOpen={isSignalsOpen}
+          meta={`${getOpportunitySignals(card).length} sinyal grubu`}
+          title="Arayış Sinyalleri"
+          onToggle={() => setIsSignalsOpen((current) => !current)}
+        >
+          <div className="grid gap-3 md:grid-cols-2">
             {getOpportunitySignals(card).map((signal) => (
-              <div key={`${card.companyName}-${signal.label}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
-                <div className="text-[12px] font-semibold text-[#303640]">{signal.label}</div>
-                <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{signal.fit}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {signal.urls.map((url) => (
-                    <ResearchLink
-                      key={`${signal.label}-${url.label}`}
-                      href={url.href}
-                      label={url.label}
-                      ariaLabel={`${card.companyName} ${signal.label} ${url.label} araması`}
-                    />
-                  ))}
+                <div key={`${card.companyName}-${signal.label}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
+                  <div className="text-[12px] font-semibold text-[#303640]">{signal.label}</div>
+                  <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{signal.fit}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {signal.urls.map((url) => (
+                      <ResearchLink
+                        key={`${signal.label}-${url.label}`}
+                        href={url.href}
+                        label={url.label}
+                        ariaLabel={`${card.companyName} ${signal.label} ${url.label} araması`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
             ))}
           </div>
-        </section>
+        </CollapsiblePanel>
 
-        <section className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4">
-          <SectionTitle icon={UserRound} label="Kritik Kişiler" />
-          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-1">
+        <CollapsiblePanel
+          icon={UserRound}
+          isOpen={isPeopleOpen}
+          meta={`${card.decisionMakers.length} kişi tipi`}
+          title="Kritik Kişiler"
+          onToggle={() => setIsPeopleOpen((current) => !current)}
+        >
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-1">
             {card.decisionMakers.map((person) => (
               <div key={`${card.companyName}-${person.name}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
                 <div className="min-w-0">
@@ -378,9 +392,44 @@ function IntelligenceResult({ card }: { card: IntelligenceCard }) {
               </div>
             ))}
           </div>
-        </section>
+        </CollapsiblePanel>
       </div>
     </article>
+  );
+}
+
+function CollapsiblePanel({
+  children,
+  icon: Icon,
+  isOpen,
+  meta,
+  onToggle,
+  title,
+}: {
+  children: React.ReactNode;
+  icon: LucideIcon;
+  isOpen: boolean;
+  meta: string;
+  onToggle: () => void;
+  title: string;
+}) {
+  return (
+    <section className="rounded-md border border-[#edf0f3] bg-[#fbfcfd]">
+      <button
+        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between gap-3 p-4 text-left"
+        onClick={onToggle}
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <Icon className="size-3.5 text-[#2563eb]" />
+          <span className="text-[12px] font-semibold text-[#303640]">{title}</span>
+          <span className="hidden text-[11px] text-[#8a929d] sm:inline">{meta}</span>
+        </span>
+        <ChevronRight className={cn("size-4 text-[#8a929d] transition", isOpen && "rotate-90")} />
+      </button>
+
+      {isOpen ? <div className="border-t border-[#edf0f3] p-4">{children}</div> : null}
+    </section>
   );
 }
 
