@@ -277,114 +277,119 @@ function FilterPanel({
 function IntelligenceResult({ card }: { card: IntelligenceCard }) {
   return (
     <article className="group rounded-lg border border-[#e8eaee] bg-white p-5 transition duration-200 hover:border-[#d5dce5] hover:shadow-[0_22px_60px_rgba(15,23,42,0.055)]">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-[18px] font-semibold tracking-normal text-[#111318]">{card.companyName}</h3>
-                <span className="rounded-full border border-[#dfe4ea] bg-[#fbfcfd] px-2 py-1 text-[11px] font-medium text-[#69707a]">
-                  {card.industry}
-                </span>
-                <span
-                  className={cn(
-                    "rounded-full border px-2 py-1 text-[11px] font-medium",
-                    card.opportunityLayer === "Stratejik / Operasyonel"
-                      ? "border-[#cfe0ff] bg-[#f5f8ff] text-[#174ea6]"
-                      : "border-[#e6e0d6] bg-[#fcfaf7] text-[#7a5a2d]",
-                  )}
-                >
-                  {card.opportunityLayer}
-                </span>
-              </div>
-              <p className="mt-1 text-[12px] text-[#8a929d]">
-                {card.location} · {card.companyType} · {card.productCategory}
-              </p>
-            </div>
-            <Score value={card.opportunityScore} level={card.opportunityLevel} />
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-[18px] font-semibold tracking-normal text-[#111318]">{card.companyName}</h3>
+            <span className="rounded-full border border-[#dfe4ea] bg-[#fbfcfd] px-2 py-1 text-[11px] font-medium text-[#69707a]">
+              {card.industry}
+            </span>
+            <span
+              className={cn(
+                "rounded-full border px-2 py-1 text-[11px] font-medium",
+                card.opportunityLayer === "Stratejik / Operasyonel"
+                  ? "border-[#cfe0ff] bg-[#f5f8ff] text-[#174ea6]"
+                  : "border-[#e6e0d6] bg-[#fcfaf7] text-[#7a5a2d]",
+              )}
+            >
+              {card.opportunityLayer}
+            </span>
           </div>
-
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            <InsightBlock icon={Layers3} label="Muhtemel Operasyonel Problem" value={card.operationalPain} />
-            <InsightBlock icon={Activity} label="Olası UX / Ürün Problemi" value={card.uxProductProblem} />
-            <InsightBlock icon={MessageSquareText} label="Önerilen Yaklaşım Açısı" value={card.approachAngle} />
-            <InsightBlock icon={FileText} label="Önerilen Kudreto Case Study" value={card.caseStudy} />
-            <InsightBlock icon={Sparkles} label="İletişim Tonu Önerisi" value={card.communicationTone} />
-          </div>
+          <p className="mt-1 text-[12px] text-[#8a929d]">
+            {card.location} · {card.companyType} · {card.productCategory}
+          </p>
         </div>
-
-        <div className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <Score value={card.opportunityScore} level={card.opportunityLevel} />
           <a
             href={card.companyLinkedInUrl}
             target="_blank"
             rel="noreferrer"
-            className="mb-4 flex items-center justify-between rounded-md border border-[#dfe4ea] bg-white px-3 py-2 text-[12px] font-medium text-[#303640] transition hover:border-[#cbd5e1] hover:text-[#174ea6]"
+            className="flex h-[52px] items-center gap-2 rounded-md border border-[#dfe4ea] bg-[#fbfcfd] px-3 text-[12px] font-medium text-[#303640] transition hover:border-[#cbd5e1] hover:bg-white hover:text-[#174ea6]"
           >
             <span>Şirket LinkedIn</span>
             <ExternalLink className="size-3.5" />
           </a>
-
-          <div className="mb-4 border-b border-[#edf0f3] pb-4">
-            <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-[#303640]">
-              <Signal className="size-3.5 text-[#2563eb]" />
-              Arayış Sinyalleri
-            </div>
-            <div className="space-y-3">
-              {getOpportunitySignals(card).map((signal) => (
-                <div key={`${card.companyName}-${signal.label}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
-                  <div className="text-[12px] font-semibold text-[#303640]">{signal.label}</div>
-                  <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{signal.fit}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {signal.urls.map((url) => (
-                      <ResearchLink
-                        key={`${signal.label}-${url.label}`}
-                        href={url.href}
-                        label={url.label}
-                        ariaLabel={`${card.companyName} ${signal.label} ${url.label} araması`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-4 border-b border-[#edf0f3] pb-4">
-            <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-[#303640]">
-              <UserRound className="size-3.5 text-[#2563eb]" />
-              Kritik Kişiler
-            </div>
-            <div className="space-y-3">
-              {card.decisionMakers.map((person) => (
-                <div key={`${card.companyName}-${person.name}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="truncate text-[12px] font-semibold text-[#303640]">{person.name}</div>
-                      <div className="mt-1 text-[11px] leading-4 text-[#8a929d]">{person.role}</div>
-                    </div>
-                  </div>
-                  <p className="mt-2 text-[11px] leading-4 text-[#69707a]">{person.relevance}</p>
-                  <p className="mt-2 text-[11px] leading-4 text-[#303640]">{person.messageAngle}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <ResearchLink href={person.linkedinUrl} label="LinkedIn" ariaLabel={`${person.name} LinkedIn kişi araması`} />
-                    <ResearchLink href={person.googleSearchUrl} label="Google" ariaLabel={`${person.name} Google LinkedIn araması`} />
-                    <ResearchLink href={person.bingSearchUrl} label="Bing" ariaLabel={`${person.name} Bing LinkedIn araması`} />
-                    <ResearchLink href={person.glassdoorSearchUrl} label="Glassdoor" ariaLabel={`${person.name} Glassdoor araması`} />
-                    <ResearchLink href={person.newsSearchUrl} label="Web Sinyali" ariaLabel={`${person.name} web sinyali araması`} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-[#303640]">
-            <MessageSquareText className="size-3.5 text-[#2563eb]" />
-            İlk Outreach Önerisi
-          </div>
-          <p className="text-[13px] leading-6 text-[#525a66]">{card.messagePreview}</p>
         </div>
       </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <SectionTitle icon={Layers3} label="Stratejik Okuma" />
+          <div className="mt-3 grid gap-4 md:grid-cols-2">
+            <InsightBlock label="Muhtemel Operasyonel Problem" value={card.operationalPain} />
+            <InsightBlock label="Olası UX / Ürün Problemi" value={card.uxProductProblem} />
+            <InsightBlock label="Önerilen Yaklaşım Açısı" value={card.approachAngle} className="md:col-span-2" />
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <InsightBlock label="Önerilen Kudreto Case Study" value={card.caseStudy} />
+            <InsightBlock label="İletişim Tonu Önerisi" value={card.communicationTone} />
+          </div>
+        </div>
+
+        <div className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4 lg:col-span-4">
+          <SectionTitle icon={MessageSquareText} label="İlk Outreach Önerisi" />
+          <p className="mt-3 text-[13px] leading-6 text-[#525a66]">{card.messagePreview}</p>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <section className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4">
+          <SectionTitle icon={Signal} label="Arayış Sinyalleri" />
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {getOpportunitySignals(card).map((signal) => (
+              <div key={`${card.companyName}-${signal.label}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
+                <div className="text-[12px] font-semibold text-[#303640]">{signal.label}</div>
+                <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{signal.fit}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {signal.urls.map((url) => (
+                    <ResearchLink
+                      key={`${signal.label}-${url.label}`}
+                      href={url.href}
+                      label={url.label}
+                      ariaLabel={`${card.companyName} ${signal.label} ${url.label} araması`}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4">
+          <SectionTitle icon={UserRound} label="Kritik Kişiler" />
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-1">
+            {card.decisionMakers.map((person) => (
+              <div key={`${card.companyName}-${person.name}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
+                <div className="min-w-0">
+                  <div className="truncate text-[12px] font-semibold text-[#303640]">{person.name}</div>
+                  <div className="mt-1 text-[11px] leading-4 text-[#8a929d]">{person.role}</div>
+                </div>
+                <p className="mt-2 text-[11px] leading-4 text-[#69707a]">{person.relevance}</p>
+                <p className="mt-2 text-[11px] leading-4 text-[#303640]">{person.messageAngle}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <ResearchLink href={person.linkedinUrl} label="LinkedIn" ariaLabel={`${person.name} LinkedIn kişi araması`} />
+                  <ResearchLink href={person.googleSearchUrl} label="Google" ariaLabel={`${person.name} Google LinkedIn araması`} />
+                  <ResearchLink href={person.bingSearchUrl} label="Bing" ariaLabel={`${person.name} Bing LinkedIn araması`} />
+                  <ResearchLink href={person.glassdoorSearchUrl} label="Glassdoor" ariaLabel={`${person.name} Glassdoor araması`} />
+                  <ResearchLink href={person.newsSearchUrl} label="Web Sinyali" ariaLabel={`${person.name} web sinyali araması`} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </article>
+  );
+}
+
+function SectionTitle({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+  return (
+    <div className="flex items-center gap-2 text-[12px] font-semibold text-[#303640]">
+      <Icon className="size-3.5 text-[#2563eb]" />
+      {label}
+    </div>
   );
 }
 
@@ -404,20 +409,17 @@ function ResearchLink({ href, label, ariaLabel }: { href: string; label: string;
 }
 
 function InsightBlock({
-  icon: Icon,
   label,
   value,
+  className,
 }: {
-  icon: LucideIcon;
   label: string;
   value: string;
+  className?: string;
 }) {
   return (
-    <div className="min-w-0">
-      <div className="mb-1.5 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.07em] text-[#8a929d]">
-        <Icon className="size-3.5 text-[#6f7a88]" />
-        {label}
-      </div>
+    <div className={cn("min-w-0", className)}>
+      <div className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.07em] text-[#8a929d]">{label}</div>
       <p className="text-[13px] leading-6 text-[#303640]">{value}</p>
     </div>
   );
