@@ -14,6 +14,15 @@ export type DecisionMaker = {
   messageAngle: string;
 };
 
+export type OpportunitySignal = {
+  label: string;
+  fit: string;
+  urls: Array<{
+    label: string;
+    href: string;
+  }>;
+};
+
 export type IntelligenceFilters = {
   country: string;
   city: string;
@@ -64,6 +73,10 @@ function glassdoorSearchUrl(companyName: string, query: string) {
 
 function newsSearchUrl(companyName: string, query: string) {
   return `https://www.google.com/search?q=${encodeURIComponent(`"${companyName}" "${query}" product OR digital OR operations OR design`)}`;
+}
+
+function googleSearchUrl(query: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 }
 
 function contact(
@@ -464,4 +477,47 @@ export function runMockAnalysis(filters: IntelligenceFilters) {
     .sort((a, b) => b.opportunityScore - a.opportunityScore);
 
   return scored.slice(0, 5);
+}
+
+export function getOpportunitySignals(card: IntelligenceCard): OpportunitySignal[] {
+  const company = card.companyName;
+
+  return [
+    {
+      label: "Product / UX arayışı",
+      fit: "Açık ürün, UX veya product design rolleri; redesign, tasarım sistemi ve ürün netliği ihtiyacına işaret edebilir.",
+      urls: [
+        { label: "LinkedIn Jobs", href: googleSearchUrl(`site:linkedin.com/jobs "${company}" "Product Designer" OR "UX Designer" OR "Product Manager"`) },
+        { label: "Kariyer.net", href: googleSearchUrl(`site:kariyer.net "${company}" "UX" OR "Product Designer" OR "Ürün Yöneticisi"`) },
+        { label: "Indeed", href: googleSearchUrl(`site:indeed.com "${company}" "UX" OR "Product Designer" OR "Product Manager"`) },
+      ],
+    },
+    {
+      label: "Operasyon / iç sistem arayışı",
+      fit: "Operations, internal tools veya platform rolleri; Kudreto için operasyonel UX ve karar yüzeyi fırsatı olabilir.",
+      urls: [
+        { label: "Google", href: googleSearchUrl(`"${company}" "operations" "product" "internal tools" OR "platform"`) },
+        { label: "Glassdoor", href: googleSearchUrl(`site:glassdoor.com "${company}" "operations" "product"` ) },
+        { label: "ATS", href: googleSearchUrl(`("${company}" "operations") (site:jobs.lever.co OR site:boards.greenhouse.io OR site:jobs.ashbyhq.com OR site:workable.com)`) },
+      ],
+    },
+    {
+      label: "AI / data workflow arayışı",
+      fit: "AI, data, automation veya decision systems rolleri; AI-native workflow ve açıklanabilir karar sistemi fırsatı doğurabilir.",
+      urls: [
+        { label: "Google", href: googleSearchUrl(`"${company}" "AI" OR "data product" OR "automation" OR "machine learning"`) },
+        { label: "LinkedIn Jobs", href: googleSearchUrl(`site:linkedin.com/jobs "${company}" "AI" OR "Data Product" OR "Automation"`) },
+        { label: "Wellfound", href: googleSearchUrl(`site:wellfound.com "${company}" "AI" OR "Product"` ) },
+      ],
+    },
+    {
+      label: "Kariyer sayfası / ATS izi",
+      fit: "Şirketin kendi kariyer sayfası ve ATS kullanımı, hangi ekiplerin büyüdüğünü daha temiz gösterir.",
+      urls: [
+        { label: "Career Page", href: googleSearchUrl(`"${company}" careers OR kariyer OR jobs`) },
+        { label: "Lever", href: googleSearchUrl(`site:jobs.lever.co "${company}"`) },
+        { label: "Greenhouse", href: googleSearchUrl(`site:boards.greenhouse.io "${company}"`) },
+      ],
+    },
+  ];
 }

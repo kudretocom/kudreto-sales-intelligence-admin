@@ -24,6 +24,7 @@ import {
 import { useMemo, useState } from "react";
 import {
   filterOptions,
+  getOpportunitySignals,
   initialFilters,
   IntelligenceCard,
   IntelligenceFilters,
@@ -322,6 +323,31 @@ function IntelligenceResult({ card }: { card: IntelligenceCard }) {
             <span>Şirket LinkedIn</span>
             <ExternalLink className="size-3.5" />
           </a>
+
+          <div className="mb-4 border-b border-[#edf0f3] pb-4">
+            <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-[#303640]">
+              <Signal className="size-3.5 text-[#2563eb]" />
+              Arayış Sinyalleri
+            </div>
+            <div className="space-y-3">
+              {getOpportunitySignals(card).map((signal) => (
+                <div key={`${card.companyName}-${signal.label}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
+                  <div className="text-[12px] font-semibold text-[#303640]">{signal.label}</div>
+                  <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{signal.fit}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {signal.urls.map((url) => (
+                      <ResearchLink
+                        key={`${signal.label}-${url.label}`}
+                        href={url.href}
+                        label={url.label}
+                        ariaLabel={`${card.companyName} ${signal.label} ${url.label} araması`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div className="mb-4 border-b border-[#edf0f3] pb-4">
             <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-[#303640]">

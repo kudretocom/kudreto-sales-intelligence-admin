@@ -76,4 +76,5 @@ MVP kişi araştırması:
 - Bing `site:linkedin.com/in` arama linkleri
 - Glassdoor odaklı Google arama linkleri
 - Şirket + rol bazlı genel web sinyali aramaları
+- LinkedIn Jobs, Kariyer.net, Indeed, Wellfound, Lever ve Greenhouse arayış sinyalleri
 - Apollo ve PDL endpoint iskeletleri korunur, ancak MVP'de zorunlu değildir
