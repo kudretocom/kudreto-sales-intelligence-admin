@@ -23,20 +23,12 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import {
-  filterOptions,
-  getOpportunitySignals,
-  initialFilters,
-  IntelligenceCard,
-  IntelligenceFilters,
-  OpportunityLevel,
-  runMockAnalysis,
-} from "@/lib/intelligence";
 import { cn } from "@/lib/utils";
+import { getWorkspace, workspaces, type WorkspaceCard, type WorkspaceConfig, type WorkspaceFilters } from "@/workspaces";
 
 const navigation = [
   { label: "Genel Bakış", icon: Activity },
-  { label: "Sales Intelligence", icon: Sparkles, active: true },
+  { label: "Büyüme İstihbaratı", icon: Sparkles, active: true },
   { label: "Bölgeler", icon: Map },
   { label: "Sinyaller", icon: Signal },
   { label: "Şirketler", icon: Building2 },
@@ -45,32 +37,31 @@ const navigation = [
   { label: "Ayarlar", icon: Settings },
 ];
 
-const fieldLabels: Record<keyof IntelligenceFilters, string> = {
-  country: "Ülke",
-  city: "Şehir",
-  industry: "Sektör",
-  companyType: "Şirket Tipi",
-  productCategory: "Ürün Kategorisi",
-  opportunityLevel: "Fırsat Seviyesi",
-};
-
 export default function Home() {
-  const [filters, setFilters] = useState<IntelligenceFilters>(initialFilters);
+  const [workspaceId, setWorkspaceId] = useState(workspaces[0].id);
+  const workspace = getWorkspace(workspaceId);
+  const [filters, setFilters] = useState<WorkspaceFilters>(workspace.initialFilters);
   const [analysisRun, setAnalysisRun] = useState(true);
-  const [cards, setCards] = useState<IntelligenceCard[]>(() => runMockAnalysis(initialFilters));
+  const [cards, setCards] = useState<WorkspaceCard[]>(() => workspace.runAnalysis(workspace.initialFilters));
 
-  const activeContext = useMemo(
-    () => `${filters.city} / ${filters.industry} / ${filters.productCategory}`,
-    [filters.city, filters.industry, filters.productCategory],
-  );
+  const activeContext = useMemo(() => getActiveContext(workspace, filters), [filters, workspace]);
 
-  function updateFilter<K extends keyof IntelligenceFilters>(key: K, value: IntelligenceFilters[K]) {
+  function updateFilter(key: string, value: string) {
     setFilters((current) => ({ ...current, [key]: value }));
     setAnalysisRun(false);
   }
 
   function handleRunAnalysis() {
-    setCards(runMockAnalysis(filters));
+    setCards(workspace.runAnalysis(filters));
+    setAnalysisRun(true);
+  }
+
+  function handleWorkspaceChange(nextWorkspaceId: string) {
+    const nextWorkspace = getWorkspace(nextWorkspaceId);
+
+    setWorkspaceId(nextWorkspace.id);
+    setFilters(nextWorkspace.initialFilters);
+    setCards(nextWorkspace.runAnalysis(nextWorkspace.initialFilters));
     setAnalysisRun(true);
   }
 
@@ -84,8 +75,8 @@ export default function Home() {
                 <CircleDot className="size-4 text-[#2563eb]" strokeWidth={2.3} />
               </div>
               <div>
-                <div className="text-[13px] font-semibold tracking-[0.02em] text-[#111318]">Kudreto</div>
-                <div className="text-[11px] text-[#7a828d]">İçgörü Sistemi</div>
+                <div className="text-[13px] font-semibold tracking-[0.02em] text-[#111318]">Internal Growth OS</div>
+                <div className="text-[11px] text-[#7a828d]">Private Intelligence</div>
               </div>
             </div>
 
@@ -126,13 +117,11 @@ export default function Home() {
               <div>
                 <div className="mb-3 flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.08em] text-[#7a828d]">
                   <PanelLeft className="size-3.5" />
-                  Kudreto içgörü çalışma alanı
+                  {workspace.eyebrow}
                 </div>
-                <h1 className="text-[32px] font-semibold tracking-normal text-[#111318] sm:text-[40px]">
-                  Sales Intelligence
-                </h1>
+                <h1 className="text-[32px] font-semibold tracking-normal text-[#111318] sm:text-[40px]">Internal Growth OS</h1>
                 <p className="mt-3 max-w-[650px] text-[15px] leading-7 text-[#69707a]">
-                  Kudreto için potansiyel fırsatları, operasyonel problemleri ve stratejik yaklaşım alanlarını analiz edin.
+                  {workspace.description}
                 </p>
               </div>
 
@@ -147,14 +136,14 @@ export default function Home() {
               </div>
             </div>
 
-            <FilterPanel filters={filters} onChange={updateFilter} onRunAnalysis={handleRunAnalysis} />
+            <WorkspaceSwitcher activeId={workspace.id} onChange={handleWorkspaceChange} />
+
+            <FilterPanel filters={filters} onChange={updateFilter} onRunAnalysis={handleRunAnalysis} workspace={workspace} />
 
             <div className="mt-8 flex items-center justify-between">
               <div>
-                <h2 className="text-[15px] font-semibold text-[#15171a]">Fırsat Araştırması</h2>
-                <p className="mt-1 text-[13px] text-[#7a828d]">
-                  Stratejik uyum, operasyonel problem ve case eşleşmesine göre sıralanır.
-                </p>
+                <h2 className="text-[15px] font-semibold text-[#15171a]">{workspace.resultTitle}</h2>
+                <p className="mt-1 text-[13px] text-[#7a828d]">{workspace.resultDescription}</p>
               </div>
               <div className="hidden items-center gap-2 text-[12px] text-[#8a929d] sm:flex">
                 <span className="size-1.5 rounded-full bg-[#2563eb]" />
@@ -164,7 +153,7 @@ export default function Home() {
 
             <div className="mt-4 grid gap-4">
               {cards.map((card) => (
-                <IntelligenceResult key={card.companyName} card={card} />
+                <IntelligenceResult key={card.id} card={card} />
               ))}
             </div>
           </div>
@@ -212,17 +201,40 @@ function Topbar({ onRunAnalysis }: { onRunAnalysis: () => void }) {
   );
 }
 
+function WorkspaceSwitcher({ activeId, onChange }: { activeId: string; onChange: (workspaceId: string) => void }) {
+  return (
+    <section className="mb-5 flex flex-col gap-3 rounded-lg border border-[#e8eaee] bg-white p-2 shadow-[0_12px_35px_rgba(15,23,42,0.025)] sm:flex-row">
+      {workspaces.map((workspace) => (
+        <button
+          key={workspace.id}
+          onClick={() => onChange(workspace.id)}
+          className={cn(
+            "flex flex-1 items-center justify-between rounded-md px-4 py-3 text-left transition",
+            activeId === workspace.id ? "bg-[#f2f6ff] text-[#174ea6]" : "text-[#69707a] hover:bg-[#f8f9fb] hover:text-[#303640]",
+          )}
+        >
+          <span>
+            <span className="block text-[13px] font-semibold">{workspace.name}</span>
+            <span className="mt-1 block text-[11px] text-current/70">{workspace.eyebrow}</span>
+          </span>
+          <span className={cn("size-2 rounded-full", activeId === workspace.id ? "bg-[#2563eb]" : "bg-[#d7dde5]")} />
+        </button>
+      ))}
+    </section>
+  );
+}
+
 function FilterPanel({
   filters,
   onChange,
   onRunAnalysis,
+  workspace,
 }: {
-  filters: IntelligenceFilters;
-  onChange: <K extends keyof IntelligenceFilters>(key: K, value: IntelligenceFilters[K]) => void;
+  filters: WorkspaceFilters;
+  onChange: (key: string, value: string) => void;
   onRunAnalysis: () => void;
+  workspace: WorkspaceConfig;
 }) {
-  const entries = Object.entries(filterOptions) as Array<[keyof IntelligenceFilters, string[]]>;
-
   return (
     <section className="rounded-lg border border-[#e8eaee] bg-white p-4 shadow-[0_20px_50px_rgba(15,23,42,0.035)]">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -237,19 +249,19 @@ function FilterPanel({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-        {entries.map(([key, values]) => (
-          <label key={key} className="block">
+        {workspace.filters.map((filter) => (
+          <label key={filter.key} className="block">
             <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.07em] text-[#8a929d]">
-              {fieldLabels[key]}
+              {filter.label}
             </span>
             <div className="relative">
               <select
-                aria-label={fieldLabels[key]}
-                value={filters[key]}
-                onChange={(event) => onChange(key, event.target.value as OpportunityLevel)}
+                aria-label={filter.label}
+                value={filters[filter.key]}
+                onChange={(event) => onChange(filter.key, event.target.value)}
                 className="h-10 w-full appearance-none rounded-md border border-[#dfe4ea] bg-[#fbfcfd] px-3 pr-8 text-[13px] font-medium text-[#303640] outline-none transition hover:border-[#ccd4dd] focus:border-[#2563eb] focus:bg-white focus:ring-4 focus:ring-[#2563eb]/10"
               >
-                {values.map((value) => (
+                {filter.options.map((value) => (
                   <option key={value}>{value}</option>
                 ))}
               </select>
@@ -261,7 +273,7 @@ function FilterPanel({
 
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#edf0f3] pt-4">
         <p className="hidden text-[12px] leading-5 text-[#7a828d] md:block">
-          Seçili bağlama göre şirketleri, fırsat katmanını ve Kudreto case eşleşmesini yeniden hesaplar.
+          Seçili workspace bağlamına göre fırsatları, sinyalleri ve mesaj önerilerini yeniden hesaplar.
         </p>
         <button
           onClick={onRunAnalysis}
@@ -275,45 +287,46 @@ function FilterPanel({
   );
 }
 
-function IntelligenceResult({ card }: { card: IntelligenceCard }) {
+function IntelligenceResult({ card }: { card: WorkspaceCard }) {
   const [isSignalsOpen, setIsSignalsOpen] = useState(false);
   const [isPeopleOpen, setIsPeopleOpen] = useState(false);
+  const [firstSection, secondSection] = card.researchSections;
 
   return (
     <article className="group rounded-lg border border-[#e8eaee] bg-white p-5 transition duration-200 hover:border-[#d5dce5] hover:shadow-[0_22px_60px_rgba(15,23,42,0.055)]">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[18px] font-semibold tracking-normal text-[#111318]">{card.companyName}</h3>
+            <h3 className="text-[18px] font-semibold tracking-normal text-[#111318]">{card.title}</h3>
             <span className="rounded-full border border-[#dfe4ea] bg-[#fbfcfd] px-2 py-1 text-[11px] font-medium text-[#69707a]">
-              {card.industry}
+              {card.category}
             </span>
             <span
               className={cn(
                 "rounded-full border px-2 py-1 text-[11px] font-medium",
-                card.opportunityLayer === "Stratejik / Operasyonel"
+                card.opportunityType.includes("Operasyonel") || card.opportunityType.includes("Tedarik")
                   ? "border-[#cfe0ff] bg-[#f5f8ff] text-[#174ea6]"
                   : "border-[#e6e0d6] bg-[#fcfaf7] text-[#7a5a2d]",
               )}
             >
-              {card.opportunityLayer}
+              {card.opportunityType}
             </span>
           </div>
-          <p className="mt-1 text-[12px] text-[#8a929d]">
-            {card.location} · {card.companyType} · {card.productCategory}
-          </p>
+          <p className="mt-1 text-[12px] text-[#8a929d]">{card.meta}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Score value={card.opportunityScore} level={card.opportunityLevel} />
-          <a
-            href={card.companyLinkedInUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-[52px] items-center gap-2 rounded-md border border-[#dfe4ea] bg-[#fbfcfd] px-3 text-[12px] font-medium text-[#303640] transition hover:border-[#cbd5e1] hover:bg-white hover:text-[#174ea6]"
-          >
-            <span>Şirket LinkedIn</span>
-            <ExternalLink className="size-3.5" />
-          </a>
+          {card.externalLink ? (
+            <a
+              href={card.externalLink.href}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-[52px] items-center gap-2 rounded-md border border-[#dfe4ea] bg-[#fbfcfd] px-3 text-[12px] font-medium text-[#303640] transition hover:border-[#cbd5e1] hover:bg-white hover:text-[#174ea6]"
+            >
+              <span>{card.externalLink.label}</span>
+              <ExternalLink className="size-3.5" />
+            </a>
+          ) : null}
         </div>
       </div>
 
@@ -321,80 +334,77 @@ function IntelligenceResult({ card }: { card: IntelligenceCard }) {
         <div className="lg:col-span-8">
           <SectionTitle icon={Layers3} label="Stratejik Okuma" />
           <div className="mt-3 grid gap-4 md:grid-cols-2">
-            <InsightBlock label="Muhtemel Operasyonel Problem" value={card.operationalPain} />
-            <InsightBlock label="Olası UX / Ürün Problemi" value={card.uxProductProblem} />
-            <InsightBlock label="Önerilen Yaklaşım Açısı" value={card.approachAngle} className="md:col-span-2" />
+            {card.primaryInsights.map((insight, index) => (
+              <InsightBlock
+                key={insight.label}
+                label={insight.label}
+                value={insight.value}
+                className={index === 2 ? "md:col-span-2" : undefined}
+              />
+            ))}
           </div>
 
           <div className="mt-5 grid gap-4 md:grid-cols-2">
-            <InsightBlock label="Önerilen Kudreto Case Study" value={card.caseStudy} />
-            <InsightBlock label="İletişim Tonu Önerisi" value={card.communicationTone} />
+            <InsightBlock label={card.recommendation.label} value={card.recommendation.value} />
+            <InsightBlock label="İletişim Tonu" value={card.tone} />
           </div>
         </div>
 
         <div className="rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-4 lg:col-span-4">
-          <SectionTitle icon={MessageSquareText} label="İlk Outreach Önerisi" />
-          <p className="mt-3 text-[13px] leading-6 text-[#525a66]">{card.messagePreview}</p>
+          <SectionTitle icon={MessageSquareText} label="İlk Mesaj Önerisi" />
+          <p className="mt-3 text-[13px] leading-6 text-[#525a66]">{card.message}</p>
         </div>
       </div>
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-        <CollapsiblePanel
-          icon={Signal}
-          isOpen={isSignalsOpen}
-          meta={`${getOpportunitySignals(card).length} sinyal grubu`}
-          title="Arayış Sinyalleri"
-          onToggle={() => setIsSignalsOpen((current) => !current)}
-        >
-          <div className="grid gap-3 md:grid-cols-2">
-            {getOpportunitySignals(card).map((signal) => (
-                <div key={`${card.companyName}-${signal.label}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
-                  <div className="text-[12px] font-semibold text-[#303640]">{signal.label}</div>
-                  <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{signal.fit}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {signal.urls.map((url) => (
-                      <ResearchLink
-                        key={`${signal.label}-${url.label}`}
-                        href={url.href}
-                        label={url.label}
-                        ariaLabel={`${card.companyName} ${signal.label} ${url.label} araması`}
-                      />
-                    ))}
-                  </div>
-                </div>
-            ))}
-          </div>
-        </CollapsiblePanel>
+        {firstSection ? (
+          <CollapsiblePanel
+            icon={Signal}
+            isOpen={isSignalsOpen}
+            meta={firstSection.meta}
+            title={firstSection.title}
+            onToggle={() => setIsSignalsOpen((current) => !current)}
+          >
+            <ResearchSectionGrid cardTitle={card.title} section={firstSection} />
+          </CollapsiblePanel>
+        ) : null}
 
-        <CollapsiblePanel
-          icon={UserRound}
-          isOpen={isPeopleOpen}
-          meta={`${card.decisionMakers.length} kişi tipi`}
-          title="Kritik Kişiler"
-          onToggle={() => setIsPeopleOpen((current) => !current)}
-        >
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-1">
-            {card.decisionMakers.map((person) => (
-              <div key={`${card.companyName}-${person.name}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
-                <div className="min-w-0">
-                  <div className="truncate text-[12px] font-semibold text-[#303640]">{person.name}</div>
-                  <div className="mt-1 text-[11px] leading-4 text-[#8a929d]">{person.role}</div>
-                </div>
-                <p className="mt-2 text-[11px] leading-4 text-[#69707a]">{person.relevance}</p>
-                <p className="mt-2 text-[11px] leading-4 text-[#303640]">{person.messageAngle}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <ResearchLink href={person.linkedinUrl} label="LinkedIn" ariaLabel={`${person.name} LinkedIn kişi araması`} />
-                  <ResearchLink href={person.googleSearchUrl} label="Google" ariaLabel={`${person.name} Google LinkedIn araması`} />
-                  <ResearchLink href={person.bingSearchUrl} label="Bing" ariaLabel={`${person.name} Bing LinkedIn araması`} />
-                  <ResearchLink href={person.glassdoorSearchUrl} label="Glassdoor" ariaLabel={`${person.name} Glassdoor araması`} />
-                  <ResearchLink href={person.newsSearchUrl} label="Web Sinyali" ariaLabel={`${person.name} web sinyali araması`} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </CollapsiblePanel>
+        {secondSection ? (
+          <CollapsiblePanel
+            icon={UserRound}
+            isOpen={isPeopleOpen}
+            meta={secondSection.meta}
+            title={secondSection.title}
+            onToggle={() => setIsPeopleOpen((current) => !current)}
+          >
+            <ResearchSectionGrid cardTitle={card.title} section={secondSection} compact />
+          </CollapsiblePanel>
+        ) : null}
       </div>
     </article>
+  );
+}
+
+function ResearchSectionGrid({ cardTitle, compact, section }: { cardTitle: string; compact?: boolean; section: WorkspaceCard["researchSections"][number] }) {
+  return (
+    <div className={cn("grid gap-3 md:grid-cols-2", compact && "xl:grid-cols-1")}>
+      {section.items.map((item) => (
+        <div key={`${cardTitle}-${section.title}-${item.title}`} className="rounded-md border border-[#edf0f3] bg-white p-3">
+          <div className="text-[12px] font-semibold text-[#303640]">{item.title}</div>
+          <p className="mt-1.5 text-[11px] leading-4 text-[#69707a]">{item.description}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {item.links.map((url) => (
+              <ResearchLink
+                key={`${item.title}-${url.label}`}
+                href={url.href}
+                label={url.label}
+                ariaLabel={`${cardTitle} ${item.title} ${url.label} araması`}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -474,7 +484,7 @@ function InsightBlock({
   );
 }
 
-function Score({ value, level }: { value: number; level: OpportunityLevel }) {
+function Score({ value, level }: { value: number; level: string }) {
   return (
     <div className="flex items-center gap-3 rounded-md border border-[#edf0f3] bg-[#fbfcfd] px-3 py-2">
       <div className="grid size-10 place-items-center rounded-md bg-white text-[14px] font-semibold text-[#174ea6] shadow-[inset_0_0_0_1px_#e8eaee]">
@@ -486,4 +496,13 @@ function Score({ value, level }: { value: number; level: OpportunityLevel }) {
       </div>
     </div>
   );
+}
+
+function getActiveContext(workspace: WorkspaceConfig, filters: WorkspaceFilters) {
+  const selected = workspace.filters
+    .map((filter) => filters[filter.key])
+    .filter((value) => value && value !== "Tümü")
+    .slice(0, 3);
+
+  return selected.length ? selected.join(" / ") : `${workspace.shortName} / Tüm fırsatlar`;
 }

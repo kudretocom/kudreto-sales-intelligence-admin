@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kudreto Sales Intelligence",
-  description: "Kudreto için özel stratejik satış içgörüsü ve konumlanma sistemi.",
+  title: "Internal Growth OS",
+  description: "Founder-led girişimler için özel iç büyüme ve fırsat istihbaratı sistemi.",
 };
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
-# Kudreto Sales Intelligence
+# Internal Growth OS
 
-Kudreto için AI destekli stratejik satış içgörüsü, fırsat araştırması ve konumlanma hazırlığı yapan özel iç uygulama.
+Founder-led girişimler için AI destekli fırsat araştırması, konumlanma ve stratejik büyüme istihbaratı yapan özel iç platform.
 
 ## Lokal çalıştırma
 
@@ -24,9 +24,30 @@ npm run build
 - Next.js App Router
 - TailwindCSS
 - TypeScript
-- `lib/intelligence.ts` içinde gerçek şirket referanslarına dayalı yerel içgörü verisi
+- `workspaces/` altında workspace-specific içgörü motorları
+- İlk workspace'ler: Kudreto ve Tarlabil
 - Daha sonra OpenAI veya Claude entegrasyonuna hazır analiz mimarisi
 - Authentication, CRM akışı, email gönderimi veya otomasyon yok
+
+## Workspace mimarisi
+
+Her workspace kendi config dosyasında tanımlanır:
+
+- `workspaces/kudreto.ts`
+- `workspaces/tarlabil.ts`
+
+Workspace config'i şunları içerir:
+
+- name / description
+- filters
+- opportunityTypes
+- cardFieldLabels
+- analysisPrompt
+- sampleCompanies
+- messageToneRules
+- runAnalysis
+
+Yeni workspace eklemek için aynı contract ile yeni bir dosya oluşturup `workspaces/index.ts` içine eklemek yeterlidir.
 
 ## AI ve veri entegrasyonu
 

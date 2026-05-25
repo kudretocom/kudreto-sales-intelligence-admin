@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 
 type IntelligenceRequest = {
-  companyName: string;
-  industry: string;
-  productCategory: string;
-  opportunityLayer: string;
-  operationalPain: string;
-  uxProductProblem: string;
+  workspaceName?: string;
+  analysisPrompt?: string;
+  messageToneRules?: string[];
+  entityName: string;
+  category: string;
+  context: string;
+  opportunityType: string;
+  insights: Array<{
+    label: string;
+    value: string;
+  }>;
   decisionMaker?: {
     name: string;
     role: string;
@@ -15,10 +20,9 @@ type IntelligenceRequest = {
 };
 
 const systemPrompt = [
-  "Kudreto için Türkçe, sakin, stratejik ve insani satış içgörüsü üreten bir analiz motorusun.",
-  "Kudreto klasik ajans değildir; stratejik ürün tasarım partneri, operasyonel UX düşünürü, sistem odaklı danışman, async ürün işbirlikçisi ve AI-native ürün stratejistidir.",
-  "Hem stratejik/operasyonel dönüşüm fırsatlarını hem de arayüz, redesign, tasarım sistemi ve premium visual design fırsatlarını değerli gör.",
-  "Yanıtı kısa JSON olarak ver: operationalInsight, uxOpportunity, positioningAngle, outreachMessage.",
+  "Internal Growth OS için Türkçe, sakin, stratejik ve insani fırsat içgörüsü üreten bir analiz motorusun.",
+  "Farklı founder-led workspace'ler için çalışırsın; her workspace'in kendi fırsat mantığı, veri alanları ve mesaj tonu vardır.",
+  "Yanıtı kısa JSON olarak ver: primaryInsight, opportunityReading, positioningAngle, outreachMessage.",
   "Agresif satış dili, startup klişesi, fake corporate wording ve uzun açıklama kullanma.",
 ].join("\n");
 
@@ -75,12 +79,14 @@ export async function POST(request: Request) {
   }
 
   const prompt = [
-    `Şirket: ${body.companyName}`,
-    `Sektör: ${body.industry}`,
-    `Ürün kategorisi: ${body.productCategory}`,
-    `Fırsat katmanı: ${body.opportunityLayer}`,
-    `Operasyonel problem: ${body.operationalPain}`,
-    `UX/ürün problemi: ${body.uxProductProblem}`,
+    `Workspace: ${body.workspaceName ?? "Bilinmeyen workspace"}`,
+    body.analysisPrompt ? `Workspace analiz mantığı: ${body.analysisPrompt}` : "",
+    body.messageToneRules?.length ? `Ton kuralları: ${body.messageToneRules.join(", ")}` : "",
+    `Varlık/Firma: ${body.entityName}`,
+    `Kategori: ${body.category}`,
+    `Bağlam: ${body.context}`,
+    `Fırsat tipi: ${body.opportunityType}`,
+    ...body.insights.map((insight) => `${insight.label}: ${insight.value}`),
     body.decisionMaker
       ? `Kritik kişi: ${body.decisionMaker.name} / ${body.decisionMaker.role} / ${body.decisionMaker.relevance}`
       : "",
