@@ -39,8 +39,8 @@ ANTHROPIC_MAX_TOKENS=420
 ANTHROPIC_TEMPERATURE=0.2
 ANTHROPIC_CACHE_TTL_MS=1800000
 ANTHROPIC_DAILY_REQUEST_LIMIT=50
-APOLLO_API_KEY=...
-PDL_API_KEY=...
+APOLLO_API_KEY=
+PDL_API_KEY=
 ADMIN_EMAIL=kudret@kudreto.com
 ADMIN_PASSWORD_HASH=...
 AUTH_SECRET=...
@@ -69,9 +69,11 @@ POST /api/intelligence
 POST /api/prospects
 ```
 
-LinkedIn ve kişi verisi için önerilen yol:
+MVP kişi araştırması:
 
-- Apollo People API: hedef şirket içindeki kişi/rol araması için
-- Apollo Organization API: şirket doğrulama ve firma bilgisi için
-- People Data Labs: kişi ve şirket enrichment, LinkedIn URL doğrulama ve firmografik veri için
-- LinkedIn resmi API: kısıtlı erişimli olduğu için doğrudan prospecting/veri zenginleştirme için genellikle pratik değildir
+- Ücretsiz LinkedIn kişi arama linkleri
+- Google `site:linkedin.com/in` arama linkleri
+- Bing `site:linkedin.com/in` arama linkleri
+- Glassdoor odaklı Google arama linkleri
+- Şirket + rol bazlı genel web sinyali aramaları
+- Apollo ve PDL endpoint iskeletleri korunur, ancak MVP'de zorunlu değildir

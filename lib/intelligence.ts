@@ -6,6 +6,10 @@ export type DecisionMaker = {
   name: string;
   role: string;
   linkedinUrl: string;
+  googleSearchUrl: string;
+  bingSearchUrl: string;
+  glassdoorSearchUrl: string;
+  newsSearchUrl: string;
   relevance: string;
   messageAngle: string;
 };
@@ -46,6 +50,22 @@ function peopleSearchUrl(companyName: string, query: string) {
   return `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(`${companyName} ${query}`)}`;
 }
 
+function googlePeopleSearchUrl(companyName: string, query: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`site:linkedin.com/in "${query}" "${companyName}"`)}`;
+}
+
+function bingPeopleSearchUrl(companyName: string, query: string) {
+  return `https://www.bing.com/search?q=${encodeURIComponent(`site:linkedin.com/in "${query}" "${companyName}"`)}`;
+}
+
+function glassdoorSearchUrl(companyName: string, query: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`site:glassdoor.com "${companyName}" "${query}"`)}`;
+}
+
+function newsSearchUrl(companyName: string, query: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`"${companyName}" "${query}" product OR digital OR operations OR design`)}`;
+}
+
 function contact(
   companyName: string,
   name: string,
@@ -58,6 +78,10 @@ function contact(
     name,
     role,
     linkedinUrl: peopleSearchUrl(companyName, query),
+    googleSearchUrl: googlePeopleSearchUrl(companyName, query),
+    bingSearchUrl: bingPeopleSearchUrl(companyName, query),
+    glassdoorSearchUrl: glassdoorSearchUrl(companyName, query),
+    newsSearchUrl: newsSearchUrl(companyName, query),
     relevance,
     messageAngle,
   };

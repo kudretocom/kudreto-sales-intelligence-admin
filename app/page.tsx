@@ -336,18 +336,16 @@ function IntelligenceResult({ card }: { card: IntelligenceCard }) {
                       <div className="truncate text-[12px] font-semibold text-[#303640]">{person.name}</div>
                       <div className="mt-1 text-[11px] leading-4 text-[#8a929d]">{person.role}</div>
                     </div>
-                    <a
-                      href={person.linkedinUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`${person.name} LinkedIn araması`}
-                      className="grid size-7 shrink-0 place-items-center rounded-md border border-[#dfe4ea] text-[#69707a] transition hover:border-[#cbd5e1] hover:text-[#174ea6]"
-                    >
-                      <ExternalLink className="size-3.5" />
-                    </a>
                   </div>
                   <p className="mt-2 text-[11px] leading-4 text-[#69707a]">{person.relevance}</p>
                   <p className="mt-2 text-[11px] leading-4 text-[#303640]">{person.messageAngle}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <ResearchLink href={person.linkedinUrl} label="LinkedIn" ariaLabel={`${person.name} LinkedIn kişi araması`} />
+                    <ResearchLink href={person.googleSearchUrl} label="Google" ariaLabel={`${person.name} Google LinkedIn araması`} />
+                    <ResearchLink href={person.bingSearchUrl} label="Bing" ariaLabel={`${person.name} Bing LinkedIn araması`} />
+                    <ResearchLink href={person.glassdoorSearchUrl} label="Glassdoor" ariaLabel={`${person.name} Glassdoor araması`} />
+                    <ResearchLink href={person.newsSearchUrl} label="Web Sinyali" ariaLabel={`${person.name} web sinyali araması`} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -361,6 +359,21 @@ function IntelligenceResult({ card }: { card: IntelligenceCard }) {
         </div>
       </div>
     </article>
+  );
+}
+
+function ResearchLink({ href, label, ariaLabel }: { href: string; label: string; ariaLabel: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={ariaLabel}
+      className="inline-flex h-7 items-center gap-1.5 rounded-md border border-[#dfe4ea] bg-[#fbfcfd] px-2 text-[11px] font-medium text-[#69707a] transition hover:border-[#cbd5e1] hover:bg-white hover:text-[#174ea6]"
+    >
+      {label}
+      <ExternalLink className="size-3" />
+    </a>
   );
 }
 
